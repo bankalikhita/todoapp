@@ -107,31 +107,38 @@ app.post("/todos/", async (request, response) => {
 //api4
 
 app.put("/todos/:todoId/", async (request, response) => {
-  const {todoId } = request.params;
+  const { todoId } = request.params;
   let updatecol = "";
   let requestbody = request.body;
   switch (true) {
-    case requestbody.status!==undefined:
-        updatecol="Status";
+    case requestbody.status !== undefined:
+      updatecol = "Status";
       break;
-    case requestbody.priority!==undefined:
-    updatecol="Priority";  
-    break;
-    case requestbody.todo!==undefined:
-    updatecol="Todo";  
-    break;
+    case requestbody.priority !== undefined:
+      updatecol = "Priority";
+      break;
+    case requestbody.todo !== undefined:
+      updatecol = "Todo";
+      break;
   }
-const previousTodoquery=select * from todo where id=${todoId};
-const previousTodo=await db.get(previousTodoquery);
-const {
-  todo = previousTodo.todo,
-  status = previousTodo.status,
-  priority = previousTodo.priority,
- } = request.body;
- const putTodosQuery =`update todo set todo="${todo}", status="${status}", priority="${priority}" where id=${todoId};`;
+  const previousTodoquery = `SELECT * FROM todo WHERE id=${todoId}`;
+  const previousTodo = await db.get(previousTodoquery);
+  const {
+    todo = previousTodo.todo,
+    status = previousTodo.status,
+    priority = previousTodo.priority,
+  } = request.body;
+  const putTodosQuery = `UPDATE todo SET todo="${todo}", status="${status}", priority="${priority}" WHERE id=${todoId}`;
 
-data = await db.run(putTodosQuery);
-  response.send("${updatecol} Updated");
+  await db.run(putTodosQuery);
+  response.send(`${updatecol} Updated`);
 });
 
+//api5
+app.delete("/todos/:todoId/", async (request, response) => {
+  const { todoId } = request.params;
+  const deletequery = `delete from todo where id=${todoId};`;
+  await db.run(deletequery);
+  response.send("Todo Deleted");
+});
 module.exports = app;
