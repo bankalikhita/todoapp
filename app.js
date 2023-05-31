@@ -121,6 +121,7 @@ app.put("/todos/:todoId/", async (request, response) => {
       updatecol = "Todo";
       break;
   }
+<<<<<<< HEAD
   const previousTodoquery = `SELECT * FROM todo WHERE id=${todoId}`;
   const previousTodo = await db.get(previousTodoquery);
   const {
@@ -131,6 +132,18 @@ app.put("/todos/:todoId/", async (request, response) => {
   const putTodosQuery = `UPDATE todo SET todo="${todo}", status="${status}", priority="${priority}" WHERE id=${todoId}`;
 
   await db.run(putTodosQuery);
+=======
+const previousTodoquery=`select * from todo where id=${todoId};`;
+const previousTodo=await db.get(previousTodoquery);
+const {
+  todo = previousTodo.todo,
+  status = previousTodo.status,
+  priority = previousTodo.priority,
+ } = request.body;
+ const putTodosQuery =`update todo set todo="${todo}", status="${status}", priority="${priority}" where id=${todoId};`;
+
+data = await db.run(putTodosQuery);
+>>>>>>> dc17d0f2c0793cee8223874b7f335cde2ea7b1f3
   response.send(`${updatecol} Updated`);
 });
 
