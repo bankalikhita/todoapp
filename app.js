@@ -121,7 +121,7 @@ app.put("/todos/:todoId/", async (request, response) => {
     updatecol="Todo";  
     break;
   }
-const previousTodoquery=select * from todo where id=${todoId};
+const previousTodoquery=`select * from todo where id=${todoId};`;
 const previousTodo=await db.get(previousTodoquery);
 const {
   todo = previousTodo.todo,
