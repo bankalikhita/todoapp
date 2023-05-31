@@ -105,41 +105,33 @@ app.post("/todos/", async (request, response) => {
 });
 
 //api4
-const hastodoProperty = (requestQuery) => {
-  return requestQuery.todo !== undefined;
-};
-app.put("/todos/:todoId/", async (request, response) => {
-  let data = null;
-  let putTodosQuery = "";
-  const { id } = request.params;
-  switch (true) {
-    case hasPriorityProperty(request.body):
-      putTodosQuery = `
-  update
-   todo 
-   set priority="${priority}"
-   WHERE
-   id=${id};`;
-      break;
-    case hasStatusProperty(request.body):
-      putTodosQuery = `
-   update
-   todo 
-   set status="${status}"
-   WHERE
-   id=${id};`;
-      break;
-    default:
-      putTodosQuery = `
-   update
-   todo 
-   set todo="${todo}"
-   WHERE
-   id=${id};`;
-  }
 
-  data = await db.run(putTodosQuery);
-  response.send("Status Updated");
+app.put("/todos/:todoId/", async (request, response) => {
+  const {todoId } = request.params;
+  let updatecol = "";
+  let requestbody = request.body;
+  switch (true) {
+    case requestbody.status!==undefined:
+        updatecol="Status";
+      break;
+    case requestbody.priority!==undefined:
+    updatecol="Priority";  
+    break;
+    case requestbody.todo!==undefined:
+    updatecol="Todo";  
+    break;
+  }
+const previousTodoquery=select * from todo where id=${todoId};
+const previousTodo=await db.get(previousTodoquery);
+const {
+  todo = previousTodo.todo,
+  status = previousTodo.status,
+  priority = previousTodo.priority,
+ } = request.body;
+ const putTodosQuery =`update todo set todo="${todo}", status="${status}", priority="${priority}" where id=${todoId};`;
+
+data = await db.run(putTodosQuery);
+  response.send("${updatecol} Updated");
 });
 
 module.exports = app;
