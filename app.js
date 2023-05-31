@@ -131,7 +131,7 @@ const {
  const putTodosQuery =`update todo set todo="${todo}", status="${status}", priority="${priority}" where id=${todoId};`;
 
 data = await db.run(putTodosQuery);
-  response.send("${updatecol} Updated");
+  response.send(`${updatecol} Updated`);
 });
 
 module.exports = app;
